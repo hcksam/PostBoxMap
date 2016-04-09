@@ -63,7 +63,7 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
             String myBestProvider = locationManager.getBestProvider(myCriteria, true);
             gpsProvider.setText(myBestProvider);
         }catch (Exception e){
-            Toast.makeText(context, "GPS error\n"+e.toString(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "GPS error\n"+e.toString(),Toast.LENGTH_LONG).show();
         }
 
         dao = new PostBoxLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
@@ -154,7 +154,7 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
                 Toast.makeText(context, R.string.message_gpsNotFind, Toast.LENGTH_LONG).show();
             }
         }catch (Exception e){
-            Toast.makeText(context, "GPS error\n"+e.toString(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error\n"+e.toString(),Toast.LENGTH_LONG).show();
             processButton.setEnabled(true);
             loading.setVisibility(View.INVISIBLE);
         }

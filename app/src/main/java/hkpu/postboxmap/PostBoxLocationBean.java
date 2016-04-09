@@ -4,27 +4,43 @@ package hkpu.postboxmap;
  * Created by hck on 9/4/2016.
  */
 public class PostBoxLocationBean {
-    private Long id;
+    private String area;
     private String address;
     private Double latitude;
     private Double longitude;
+    private String weekdays;
+    private String weekend;
 
     public PostBoxLocationBean() {
     }
 
-    public PostBoxLocationBean(long id, String address, Double latitude, Double longitude) {
-        this.id = id;
+    public PostBoxLocationBean(String area, String address, Double latitude, Double longitude, String weekdays, String weekend) {
+        this.area = area;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.weekdays = weekdays;
+        this.weekend = weekend;
     }
 
-    public Long getId() {
-        return id;
+    @Override
+    public String toString() {
+        return "PostBoxLocationBean{" +
+                "area='" + area + '\'' +
+                ", address='" + address + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", weekdays='" + weekdays + '\'' +
+                ", weekend='" + weekend + '\'' +
+                '}';
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
     }
 
     public String getAddress() {
@@ -49,5 +65,21 @@ public class PostBoxLocationBean {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getWeekdays() {
+        return weekdays;
+    }
+
+    public void setWeekdays(String weekdays) {
+        this.weekdays = weekdays;
+    }
+
+    public String getWeekend() {
+        return weekend;
+    }
+
+    public void setWeekend(String weekend) {
+        this.weekend = weekend;
     }
 }

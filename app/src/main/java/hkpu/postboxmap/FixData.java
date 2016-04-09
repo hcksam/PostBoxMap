@@ -6,5 +6,5 @@ package hkpu.postboxmap;
 public class FixData {
     public final static String AppName = "PostBoxMap";
 //    public final static String DBName = "PostBoxLocation.db";
-    public final static String DBName = "PS.sqlite";
+    public final static String DBName = "PO.sqlite";
 }
