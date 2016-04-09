@@ -36,6 +36,7 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
     LocationManager locationManager;
     Location location;
     Location nearestLocation;
+    String nearestAddress;
     PostBoxLocationDAO dao;
 
     @Override
@@ -57,16 +58,17 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
 
         try {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Criteria myCriteria = new Criteria();
-            myCriteria.setAccuracy(Criteria.ACCURACY_FINE);
-            myCriteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
-            String myBestProvider = locationManager.getBestProvider(myCriteria, true);
-            gpsProvider.setText(myBestProvider);
+            setBestProvider();
+
         }catch (Exception e){
             Toast.makeText(context, "GPS error\n"+e.toString(),Toast.LENGTH_LONG).show();
         }
 
-        dao = new PostBoxLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
+        try {
+            dao = new PostBoxLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
+        }catch (Exception e){
+            Toast.makeText(context, "Database error\n"+e.toString(),Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -92,27 +94,34 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        setBestProvider();
+    }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        if (loading.getVisibility() == View.VISIBLE && yourLocationArea.getVisibility() != View.VISIBLE){
+            process(null);
+        }
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-
     }
 
     public void process(View view){
         introduction.setVisibility(View.GONE);
+        yourLocationArea.setVisibility(View.GONE);
+        postboxLocationArea.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
         processButton.setEnabled(false);
         try{
@@ -139,7 +148,12 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
                         }
                     }
                 }
+
                 nearestLocation = getLocation(nearestBean.getLatitude(), nearestBean.getLongitude());
+                nearestAddress = nearestBean.getAddress();
+                String address = nearestBean.getArea()+"\n";
+                address += nearestAddress;
+                postboxAddress.setText(address);
 
                 if (nearestLocation != null){
                     postboxLocationArea.setVisibility(View.VISIBLE);
@@ -148,10 +162,14 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
                     processButton.setEnabled(true);
                     loading.setVisibility(View.INVISIBLE);
                 }else{
-                    Toast.makeText(context, R.string.message_postBoxNotFind, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.message_postBoxNotReady, Toast.LENGTH_LONG).show();
+                    processButton.setEnabled(true);
+                    loading.setVisibility(View.INVISIBLE);
                 }
             }else{
-                Toast.makeText(context, R.string.message_gpsNotFind, Toast.LENGTH_LONG).show();
+                processButton.setEnabled(true);
+//                loading.setVisibility(View.INVISIBLE);
+                Toast.makeText(context, R.string.message_gpsNotReady, Toast.LENGTH_LONG).show();
             }
         }catch (Exception e){
             Toast.makeText(context, "Error\n"+e.toString(),Toast.LENGTH_LONG).show();
@@ -170,14 +188,36 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
 
     public void showPostBoxMap(View view){
         if (nearestLocation != null) {
-            Uri geo = getGeoURI(nearestLocation);
+//            Uri geo = getGeoURI(nearestLocation);
+            Uri geo = getGeoURI(nearestAddress);
             Intent geoMap = new Intent(Intent.ACTION_VIEW, geo);
             startActivity(geoMap);
         }
     }
 
+    public void setBestProvider(){
+        Criteria myCriteria = new Criteria();
+        myCriteria.setAccuracy(Criteria.ACCURACY_FINE);
+        myCriteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
+        String myBestProvider = locationManager.getBestProvider(myCriteria, true);
+        gpsProvider.setText(myBestProvider);
+
+        try {
+            locationManager.removeUpdates(this);
+            locationManager.requestLocationUpdates(gpsProvider.getText().toString(), 3000, 0, this);
+        }catch (Exception e){
+            Toast.makeText(context, "Error\n"+e.toString(),Toast.LENGTH_LONG).show();
+        }
+    }
+
     public Uri getGeoURI(Location location){
         String geoURI = String.format("geo:0,0?q=%f,%f", location.getLatitude(), location.getLongitude());
+        Uri geo = Uri.parse(geoURI);
+        return geo;
+    }
+
+    public Uri getGeoURI(String address){
+        String geoURI = String.format("geo:0,0?q=%s", address);
         Uri geo = Uri.parse(geoURI);
         return geo;
     }

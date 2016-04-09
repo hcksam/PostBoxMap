@@ -6,18 +6,19 @@
 
     <string name="title_activity_find_closest_post_box">FindClosestPostBoxActivity</string>
 
-    <string name="message_gpsNotFind">GPS Location Not Find!</string>
-    <string name="message_postBoxNotFind">Post Box Location Not Find!</string>
+    <string name="message_gpsReady">GPS Location Now Ready!</string>
+    <string name="message_gpsNotReady">GPS Location Not Ready!</string>
+    <string name="message_postBoxNotReady">Post Box Database Not Ready!</string>
 
     <string name="label_button_process">Find</string>
     <string name="label_button_showOnMap">Show On Map</string>
     <string name="label_gpsProvider">GPS Provider: </string>
     <string name="label_introduction">Data will display on below..</string>
     <string name="label_loading">loading...</string>
-    <string name="label_yourLocation">-Your location as below-</string>
+    <string name="label_yourLocation">-Your location-</string>
     <string name="label_yourLocation_coordinate">Coordinate: </string>
     <string name="label_yourLocation_address">Address: </string>
-    <string name="label_postboxLocation">-Post box location as below-</string>
+    <string name="label_postboxLocation">-Post box location-</string>
     <string name="label_postboxLocation_coordinate">Coordinate: </string>
     <string name="label_postboxLocation_address">Address: </string>
 </resources>
