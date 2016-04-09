@@ -38,6 +38,7 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
     Location nearestLocation;
     String nearestAddress;
     PostBoxLocationDAO dao;
+    boolean GPSError = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,10 +167,17 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
                     processButton.setEnabled(true);
                     loading.setVisibility(View.INVISIBLE);
                 }
+
+                GPSError = false;
             }else{
                 processButton.setEnabled(true);
 //                loading.setVisibility(View.INVISIBLE);
-                Toast.makeText(context, R.string.message_gpsNotReady, Toast.LENGTH_LONG).show();
+
+                if (gpsProvider.getText().toString().equals(LocationManager.GPS_PROVIDER)){
+                    Toast.makeText(context, R.string.message_gpsNotReady, Toast.LENGTH_LONG).show();
+                    GPSError = true;
+                    setProvider(LocationManager.PASSIVE_PROVIDER);
+                }
             }
         }catch (Exception e){
             Toast.makeText(context, "Error\n"+e.toString(),Toast.LENGTH_LONG).show();
@@ -200,7 +208,14 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
         myCriteria.setAccuracy(Criteria.ACCURACY_FINE);
         myCriteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
         String myBestProvider = locationManager.getBestProvider(myCriteria, true);
-        gpsProvider.setText(myBestProvider);
+
+        if (!GPSError || !myBestProvider.equals(LocationManager.GPS_PROVIDER)) {
+            setProvider(myBestProvider);
+        }
+    }
+
+    public void setProvider(String provider){
+        gpsProvider.setText(provider);
 
         try {
             locationManager.removeUpdates(this);

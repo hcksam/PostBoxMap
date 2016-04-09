@@ -6,8 +6,8 @@
 
     <string name="title_activity_find_closest_post_box">FindClosestPostBoxActivity</string>
 
-    <string name="message_gpsReady">GPS Location Now Ready!</string>
-    <string name="message_gpsNotReady">GPS Location Not Ready!</string>
+    <string name="message_gpsReady">GPS Now Ready!</string>
+    <string name="message_gpsNotReady">GPS Not Ready!\nChange to use passive!</string>
     <string name="message_postBoxNotReady">Post Box Database Not Ready!</string>
 
     <string name="label_button_process">Find</string>
