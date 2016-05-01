@@ -4,10 +4,10 @@ package hkpu.postboxmap;
  * Created by hck on 9/4/2016.
  */
 public class SportCenterLocationBean extends CommonBean {
-    public String name;
+    private String name;
     private Double latitude;
     private Double longitude;
-    public String type;
+    private String type;
     private String address;
     private String area;
     private String phoneNumber;

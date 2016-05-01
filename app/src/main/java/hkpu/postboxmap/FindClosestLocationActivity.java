@@ -46,6 +46,7 @@ public class FindClosestLocationActivity extends AppCompatActivity implements Lo
     Location nearestLocation;
     String nearestAddress;
     boolean GPSError = false;
+    LocationDataDAO dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +74,18 @@ public class FindClosestLocationActivity extends AppCompatActivity implements Lo
             Toast.makeText(context, "GPS error\n" + e.toString(), Toast.LENGTH_LONG).show();
         }
 
-        setLocationType();
-
         dbFile = new File(getFilesDir(), FixData.DBName);
+        dbFile.delete();
         if (! dbFile.exists()) {
             Toast.makeText(context, R.string.message_initDatabase, Toast.LENGTH_SHORT).show();;
             initDB();
+        }
+
+        try {
+            dao = new LocationDataDAO(context, dbFile);
+            setLocationType();
+        } catch (Exception e) {
+            Toast.makeText(context, "Database error\n" + e.toString(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -137,7 +144,7 @@ public class FindClosestLocationActivity extends AppCompatActivity implements Lo
 
     public void setLocationType(){
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, FixData.LocationTypes);
+        ArrayAdapter<String> adapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, dao.listAllType());
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -162,21 +169,7 @@ public class FindClosestLocationActivity extends AppCompatActivity implements Lo
     }
 
     public void process(View view) {
-        CommonDAO dao = null;
-        String nowType;
-
-        try {
-            nowType = String.valueOf(locationType.getSelectedItem());
-            if (nowType.equalsIgnoreCase(FixData.Type_PostBox)) {
-//                dao = new PostBoxLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
-                dao = new PostBoxLocationDAO(context, dbFile);
-            }else{
-//                dao = new SportCenterLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
-                dao = new SportCenterLocationDAO(context, dbFile);
-            }
-        } catch (Exception e) {
-            Toast.makeText(context, "Database error\n" + e.toString(), Toast.LENGTH_LONG).show();
-        }
+        String nowType = String.valueOf(locationType.getSelectedItem());
 
         introduction.setVisibility(View.GONE);
         yourLocationArea.setVisibility(View.GONE);
@@ -189,7 +182,7 @@ public class FindClosestLocationActivity extends AppCompatActivity implements Lo
                 yourLocationArea.setVisibility(View.VISIBLE);
                 yourCoordinate.setText(getCoordinate(location));
 
-                List allLocations = dao.listAll();
+                List allLocations = dao.listByType(nowType);
                 CommonBean nearestBean = new CommonBean();
                 Float nearest = null;
                 for (int i=0;i<allLocations.size();i++){
