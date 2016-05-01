@@ -111,6 +111,12 @@ public class FindClosestLocationActivity extends AppCompatActivity implements Lo
     }
 
     @Override
+    public void onBackPressed() {
+        finishAffinity();
+        super.onBackPressed();
+    }
+
+    @Override
     public void onLocationChanged(Location location) {
         if (loading.getVisibility() == View.VISIBLE && yourLocationArea.getVisibility() != View.VISIBLE) {
             process(null);
@@ -246,7 +252,7 @@ public class FindClosestLocationActivity extends AppCompatActivity implements Lo
         }
     }
 
-    public void showPostBoxMap(View view){
+    public void showClosestMap(View view){
         if (nearestLocation != null) {
 //            Uri geo = getGeoURI(nearestLocation);
             Uri geo = getGeoURI(nearestAddress);

@@ -231,8 +231,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_button_showOnMap"
-                        android:id="@+id/showclosestMap"
-                        android:onClick="showclosestMap" />
+                        android:id="@+id/showClosestMap"
+                        android:onClick="showClosestMap" />
 
                 </LinearLayout>
 
