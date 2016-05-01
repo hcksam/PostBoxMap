@@ -13,62 +13,72 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
-public class FindClosestPostBoxActivity extends AppCompatActivity implements LocationListener {
+public class FindClosestLocationActivity extends AppCompatActivity implements LocationListener {
     Context context;
+    Spinner locationType;
     TextView gpsProvider;
     TextView introduction;
     Button processButton;
     TextView loading;
     LinearLayout yourLocationArea;
-    LinearLayout postboxLocationArea;
+    LinearLayout closestLocationArea;
     TextView yourCoordinate;
     TextView yourAddress;
-    TextView postboxCoordinate;
-    TextView postboxAddress;
+    TextView closestCoordinate;
+    TextView closestAddress;
 
+    File dbFile;
     LocationManager locationManager;
     Location location;
     Location nearestLocation;
     String nearestAddress;
-    PostBoxLocationDAO dao;
     boolean GPSError = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_find_closest_post_box);
+        setContentView(R.layout.activity_find_closest_location);
         context = this;
 
+        locationType = (Spinner) findViewById(R.id.locationType);
         gpsProvider = (TextView) findViewById(R.id.gpsProvider);
         processButton = (Button) findViewById(R.id.process);
         introduction = (TextView) findViewById(R.id.introduction);
         loading = (TextView) findViewById(R.id.loading);
         yourLocationArea = (LinearLayout) findViewById(R.id.yourLocation);
-        postboxLocationArea = (LinearLayout) findViewById(R.id.postboxLocation);
+        closestLocationArea = (LinearLayout) findViewById(R.id.closestLocation);
         yourCoordinate = (TextView) findViewById(R.id.yourLocation_coordinate);
         yourAddress = (TextView) findViewById(R.id.yourLocation_address);
-        postboxCoordinate = (TextView) findViewById(R.id.postboxLocation_coordinate);
-        postboxAddress = (TextView) findViewById(R.id.postboxLocation_address);
+        closestCoordinate = (TextView) findViewById(R.id.closestLocation_coordinate);
+        closestAddress = (TextView) findViewById(R.id.closestLocation_address);
 
         try {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             setBestProvider();
 
-        }catch (Exception e){
-            Toast.makeText(context, "GPS error\n"+e.toString(),Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(context, "GPS error\n" + e.toString(), Toast.LENGTH_LONG).show();
         }
 
-        try {
-            dao = new PostBoxLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
-        }catch (Exception e){
-            Toast.makeText(context, "Database error\n"+e.toString(),Toast.LENGTH_LONG).show();
+        setLocationType();
+
+        dbFile = new File(getFilesDir(), FixData.DBName);
+        if (! dbFile.exists()) {
+            Toast.makeText(context, R.string.message_initDatabase, Toast.LENGTH_SHORT).show();;
+            initDB();
         }
     }
 
@@ -102,7 +112,7 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
 
     @Override
     public void onLocationChanged(Location location) {
-        if (loading.getVisibility() == View.VISIBLE && yourLocationArea.getVisibility() != View.VISIBLE){
+        if (loading.getVisibility() == View.VISIBLE && yourLocationArea.getVisibility() != View.VISIBLE) {
             process(null);
         }
     }
@@ -119,23 +129,63 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
     public void onProviderDisabled(String provider) {
     }
 
-    public void process(View view){
+    public void setLocationType(){
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, FixData.LocationTypes);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        locationType.setAdapter(adapter);
+    }
+
+    public void initDB(){
+        try {
+            InputStream inputStream = getAssets().open(FixData.DBName);
+            OutputStream outputStream = new FileOutputStream(dbFile);
+
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            while ((read = inputStream.read(bytes)) != -1) {
+//                outputStream.write(bytes, 0, read);
+            }
+
+        }catch (Exception e){
+            Toast.makeText(context, R.string.message_databaseNotReady, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void process(View view) {
+        CommonDAO dao = null;
+        String nowType;
+
+        try {
+            nowType = String.valueOf(locationType.getSelectedItem());
+            if (nowType.equalsIgnoreCase(FixData.Type_PostBox)) {
+                dao = new PostBoxLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
+            }else{
+                dao = new SportCenterLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
+            }
+        } catch (Exception e) {
+            Toast.makeText(context, "Database error\n" + e.toString(), Toast.LENGTH_LONG).show();
+        }
+
         introduction.setVisibility(View.GONE);
         yourLocationArea.setVisibility(View.GONE);
-        postboxLocationArea.setVisibility(View.GONE);
+        closestLocationArea.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
         processButton.setEnabled(false);
-        try{
+        try {
             location = locationManager.getLastKnownLocation(gpsProvider.getText().toString());
             if (location != null) {
                 yourLocationArea.setVisibility(View.VISIBLE);
                 yourCoordinate.setText(getCoordinate(location));
 
-                List<PostBoxLocationBean> allLocations = dao.listAll();
-                PostBoxLocationBean nearestBean = new PostBoxLocationBean();
+                List allLocations = dao.listAll();
+                CommonBean nearestBean = new CommonBean();
                 Float nearest = null;
                 for (int i=0;i<allLocations.size();i++){
-                    PostBoxLocationBean bean = allLocations.get(i);
+                    CommonBean bean = (CommonBean) allLocations.get(i);
                     Location dbLocation = getLocation(bean.getLatitude(), bean.getLongitude());
                     float distance = location.distanceTo(dbLocation);
 
@@ -154,16 +204,16 @@ public class FindClosestPostBoxActivity extends AppCompatActivity implements Loc
                 nearestAddress = nearestBean.getAddress();
                 String address = nearestBean.getArea()+"\n";
                 address += nearestAddress;
-                postboxAddress.setText(address);
+                closestAddress.setText(address);
 
                 if (nearestLocation != null){
-                    postboxLocationArea.setVisibility(View.VISIBLE);
-                    postboxCoordinate.setText(getCoordinate(nearestLocation));
+                    closestLocationArea.setVisibility(View.VISIBLE);
+                    closestCoordinate.setText(getCoordinate(nearestLocation));
 
                     processButton.setEnabled(true);
                     loading.setVisibility(View.INVISIBLE);
                 }else{
-                    Toast.makeText(context, R.string.message_postBoxNotReady, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.message_databaseNotReady, Toast.LENGTH_LONG).show();
                     processButton.setEnabled(true);
                     loading.setVisibility(View.INVISIBLE);
                 }

@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * Created by hck on 9/4/2016.
  */
-public class PostBoxLocationDAO implements CommonDAO{
-    public final static String TABLE_NAME = "Post_Box";
+public class SportCenterLocationDAO implements CommonDAO{
+    public final static String TABLE_NAME = "Sport_Center";
     public final static String AREA_COLUMN = "Area";
     public final static String ADDRESS_COLUMN = "Address";
     public final static String LAT_COLUMN = "lat";
@@ -22,11 +22,11 @@ public class PostBoxLocationDAO implements CommonDAO{
 
     private SQLiteDatabase db;
 
-    public PostBoxLocationDAO(Context context, String dbPath) {
+    public SportCenterLocationDAO(Context context, String dbPath) {
         init(context, dbPath);
     }
 
-    public PostBoxLocationDAO(Context context) {
+    public SportCenterLocationDAO(Context context) {
         init(context, null);
     }
 
@@ -38,8 +38,8 @@ public class PostBoxLocationDAO implements CommonDAO{
         }
     }
 
-    public List<PostBoxLocationBean> listAll() {
-        List<PostBoxLocationBean> result = new ArrayList<>();
+    public List<SportCenterLocationBean> listAll() {
+        List<SportCenterLocationBean> result = new ArrayList<>();
 
         Cursor cursor = db.query(
                 TABLE_NAME, null, null, null, null, null, null, null);
@@ -52,21 +52,26 @@ public class PostBoxLocationDAO implements CommonDAO{
         return result;
     }
 
-    public PostBoxLocationBean convertBean(Cursor cursor) {
-        PostBoxLocationBean result = new PostBoxLocationBean();
+    public SportCenterLocationBean convertBean(Cursor cursor) {
+        SportCenterLocationBean result = new SportCenterLocationBean();
 
         int c = 0;
-        result.setArea(cursor.getString(c++));
-        result.setAddress(cursor.getString(c++));
+        result.setName(cursor.getString(c++));
         result.setLatitude(Double.valueOf(cursor.getString(c++)));
         result.setLongitude(Double.valueOf(cursor.getString(c++)));
+        result.setType(cursor.getString(c++));
+        result.setAddress(cursor.getString(c++));
+        result.setArea(cursor.getString(c++));
+        result.setPhoneNumber(cursor.getString(c++));
+        result.setEmail(cursor.getString(c++));
+        result.setWebSite(cursor.getString(c++));
         result.setWeekdays(cursor.getString(c++));
         result.setWeekend(cursor.getString(c++));
 
         return result;
     }
 
-    public ContentValues convertContentValues(PostBoxLocationBean bean){
+    public ContentValues convertContentValues(SportCenterLocationBean bean){
         ContentValues cv = new ContentValues();
 
         cv.put(AREA_COLUMN, bean.getArea());

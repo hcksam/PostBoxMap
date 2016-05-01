@@ -1,24 +1,23 @@
 <resources>
     <string name="app_name">PostBoxMap</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    <string name="title_activity_find_closest_post_box">FindClosestPostBoxActivity</string>
+    <string name="title_activity_find_closest_location">FindClosestLocationActivity</string>
 
     <string name="message_gpsReady">GPS Now Ready!</string>
     <string name="message_gpsNotReady">GPS Not Ready!\nChange to use passive!</string>
-    <string name="message_postBoxNotReady">Post Box Database Not Ready!</string>
-
+    <string name="message_databaseNotReady">Database Not Ready!</string>
+    <string name="message_initDatabase">Init Database...</string>
     <string name="label_button_process">Find</string>
     <string name="label_button_showOnMap">Show On Map</string>
+    <string name="label_locationType">Location Type: </string>
     <string name="label_gpsProvider">GPS Provider: </string>
     <string name="label_introduction">Data will display on below..</string>
     <string name="label_loading">loading...</string>
     <string name="label_yourLocation">-Your location-</string>
     <string name="label_yourLocation_coordinate">Coordinate: </string>
     <string name="label_yourLocation_address">Address: </string>
-    <string name="label_postboxLocation">-Post box location-</string>
-    <string name="label_postboxLocation_coordinate">Coordinate: </string>
-    <string name="label_postboxLocation_address">Address: </string>
+    <string name="label_closestLocation">-Closest location-</string>
+    <string name="label_closestLocation_coordinate">Coordinate: </string>
+    <string name="label_closestLocation_address">Address: </string>
 </resources>

@@ -23,8 +23,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FindClosestPostBoxActivity"
-            android:label="@string/title_activity_find_closest_post_box" >
+            android:name=".FindClosestLocationActivity"
+            android:label="@string/title_activity_find_closest_location" >
         </activity>
     </application>
 

@@ -7,4 +7,8 @@ public class FixData {
     public final static String AppName = "PostBoxMap";
 //    public final static String DBName = "PostBoxLocation.db";
     public final static String DBName = "PO.sqlite";
+
+    public final static String Type_PostBox = "Post Box";
+    public final static String Type_SportCenter = "Sport Center";
+    public final static String[] LocationTypes = {Type_PostBox, Type_SportCenter};
 }
