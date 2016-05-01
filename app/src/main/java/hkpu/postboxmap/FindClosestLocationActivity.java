@@ -147,7 +147,7 @@ public class FindClosestLocationActivity extends AppCompatActivity implements Lo
             byte[] bytes = new byte[1024];
 
             while ((read = inputStream.read(bytes)) != -1) {
-//                outputStream.write(bytes, 0, read);
+                outputStream.write(bytes, 0, read);
             }
 
         }catch (Exception e){
@@ -162,9 +162,11 @@ public class FindClosestLocationActivity extends AppCompatActivity implements Lo
         try {
             nowType = String.valueOf(locationType.getSelectedItem());
             if (nowType.equalsIgnoreCase(FixData.Type_PostBox)) {
-                dao = new PostBoxLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
+//                dao = new PostBoxLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
+                dao = new PostBoxLocationDAO(context, dbFile);
             }else{
-                dao = new SportCenterLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
+//                dao = new SportCenterLocationDAO(context, Environment.getExternalStorageDirectory().getAbsolutePath());
+                dao = new SportCenterLocationDAO(context, dbFile);
             }
         } catch (Exception e) {
             Toast.makeText(context, "Database error\n" + e.toString(), Toast.LENGTH_LONG).show();

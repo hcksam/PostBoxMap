@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,11 @@ public class SportCenterLocationDAO implements CommonDAO{
     public final static String WEEKEND_COLUMN = "Weekend";
 
     private SQLiteDatabase db;
+
+    public SportCenterLocationDAO(Context context, File dbFile)
+    {
+        db = context.openOrCreateDatabase(dbFile.getAbsolutePath(), SQLiteDatabase.CREATE_IF_NECESSARY, null);
+    }
 
     public SportCenterLocationDAO(Context context, String dbPath) {
         init(context, dbPath);
