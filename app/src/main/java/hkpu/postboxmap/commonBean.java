@@ -1,39 +1,31 @@
 package hkpu.postboxmap;
 
 /**
- * Created by hck on 9/4/2016.
+ * Created by hck on 1/5/2016.
  */
-public class PostBoxLocationBean extends CommonBean {
+public class CommonBean {
     private String area;
     private String address;
     private Double latitude;
     private Double longitude;
-    private String weekdays;
-    private String weekend;
 
-    public PostBoxLocationBean() {
-        super();
+    public CommonBean() {
     }
 
-    public PostBoxLocationBean(String area, String address, Double latitude, Double longitude, String weekdays, String weekend) {
-        super(area, address, latitude, longitude);
+    public CommonBean(String area, String address, Double latitude, Double longitude) {
         this.area = area;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.weekdays = weekdays;
-        this.weekend = weekend;
     }
 
     @Override
     public String toString() {
-        return "PostBoxLocationBean{" +
+        return "CommonBean{" +
                 "area='" + area + '\'' +
                 ", address='" + address + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", weekdays='" + weekdays + '\'' +
-                ", weekend='" + weekend + '\'' +
                 '}';
     }
 
@@ -67,21 +59,5 @@ public class PostBoxLocationBean extends CommonBean {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
-    }
-
-    public String getWeekdays() {
-        return weekdays;
-    }
-
-    public void setWeekdays(String weekdays) {
-        this.weekdays = weekdays;
-    }
-
-    public String getWeekend() {
-        return weekend;
-    }
-
-    public void setWeekend(String weekend) {
-        this.weekend = weekend;
     }
 }

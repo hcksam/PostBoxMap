@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void forward(){
-        Intent intent = new Intent(this, FindClosestPostBoxActivity.class);
+        Intent intent = new Intent(this, FindClosestLocationActivity.class);
         startActivity(intent);
     }
 
